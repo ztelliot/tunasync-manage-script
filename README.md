@@ -24,7 +24,7 @@ A Python tool to help manage tunasync in an easier way
    ### 关于tunasync的安装
    #### 预编译文件方式
     由于官方仅提供x86_64的二进制编译文件，故该方法仅支持x86_64架构的处理器
-   ### 编译方式
+   #### 编译方式
     因为需要安装golang、git、make，而安装默认使用包管理器
     因此本自动化编译仅在CentOS7+/Ubuntu18.04+和x86_64/i386/aarch64环境上能较好的完成
     其他系统/架构未经测试，可能需要手动编译
