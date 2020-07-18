@@ -92,7 +92,7 @@ def mirror():
                 except:
                     pass
         i += 1
-    id = input("输入需要操作的worker序号(留空返回)：")
+    id = input("输入需要操作的镜像序号(留空返回)：")
     if id:
         id = int(id)
     else:
