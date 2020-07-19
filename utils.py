@@ -410,6 +410,12 @@ def add_mirror():
     cf.close()
     print("重载Worker...")
     print(ctl_control('reload'))
+    print("检测Worker状态...")
+    status = systemd_control('status', 'worker')
+    if status.find('failed') >= 0:
+        print("Worker启动失败...\n", status)
+        print("启动Worker...")
+        systemd_control('start', 'worker')
     print("开始同步...")
     print(ctl_control('start', name))
     enable_auto('refresh', name)
