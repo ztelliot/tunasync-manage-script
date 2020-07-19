@@ -4,13 +4,6 @@ from utils import bin, build, init_manager, init_worker, add_mirror, systemd, co
 
 
 def init(mode):
-    print("检测系统进程管理方式...")
-    type = delegator.run("ps -p 1 -o comm=")
-    print(type)
-    if type == 'systemd':
-        pass
-    else:
-        print("该方式可能不受支持...")
     print("检测tunasync是否存在...")
     code = 1
     cmd = delegator.run("/usr/bin/tunasync -v")
