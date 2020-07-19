@@ -498,6 +498,9 @@ def mirror_control(action, mirror):
     elif action == 'refresh':
         get_size = "`du -sh " + config[mirror]['path'] + " | awk '{print $1}'`"
         print(ctl_control('set-size', mirror, get_size))
+    elif action == 'logs':
+        log = path + "/logs/" + mirror + '/latest'
+        print(delegator.run("tail -n 10 " + log).out)
 
 
 def get_info(mirror):
