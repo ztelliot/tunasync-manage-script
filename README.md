@@ -6,9 +6,9 @@ A Python tool to help manage tunasync in an easier way
 
 ## 如何使用 / HowTo
     安装Python3、pip、rsync
-    yum install -y python3 python3-pip rsync
+    yum install -y python3 python3-pip rsync git
     或
-    apt install -y python3 python3-pip rsync
+    apt install -y python3 python3-pip rsync git
     确认系统使用systemd进行进程管理
     ps -p 1 -o comm=
     确定crond状态
@@ -16,6 +16,9 @@ A Python tool to help manage tunasync in an easier way
     如为关闭状态，则需将其打开
     systemctl enable crond
     systemctl start crond
+    clone本项目
+    git clone https://github.com/ztelliot/tunasync-manage-script.git
+    cd tunasync-manage-script
     安装依赖
     pip3 install -r requirements.txt
     随后可以通过 python3 main.py 启动脚本
