@@ -106,7 +106,7 @@ def mirror():
     if name == '':
         print("序号不存在")
         return 0
-    mode = input("请选择操作：\n1.删除镜像\n2.停用镜像\n3.启用镜像\n4.停止同步\n5.恢复同步\n6.立即更新大小\n7.立即重试\n8.返回\n")
+    mode = input("请选择操作：\n1.删除镜像\n2.禁用镜像\n3.启用镜像\n4.停止同步\n5.开始同步\n6.立即更新大小\n7.立即重试\n8.查看日志最后10行\n9.返回\n")
     if mode:
         mode = int(mode)
     else:
@@ -125,6 +125,8 @@ def mirror():
         mirror_control('refresh', name)
     elif mode == 7:
         ctl_control('restart', name)
+    elif mode == 8:
+        mirror_control('logs', name)
     else:
         pass
 
