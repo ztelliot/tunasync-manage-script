@@ -73,7 +73,7 @@ def mirror():
                     next_time = '-\t'
                 if info['status'] == 'syncing' and config[mirror]['type'] == 'rsync':
                     try:
-                        print(str(i) + '\t' + mirror + '\t\t' + info['status'] + '\t\t' + info['size'] + '\t\t' + last_time + '(' + info['pass_time'] + ')\t\t\t' + next_time + '\t\t' + info['rate'] + '\t' + info['speed'] + '\t' + info['remain'] + '\t\t' + info['chk_remain'] + '/' + info['total'] + '\t' + info['file_name'] + '(' + info['chk_now'] + ')')
+                        print(str(i) + '\t' + mirror + '\t\t' + info['status'] + '\t\t' + info['size'] + '\t\t' + last_time + '(' + info['pass_time'] + ')\t\t\t' + next_time + '\t\t' + info['rate'] + '\t\t' + info['speed'] + '\t' + info['remain'] + '\t\t' + info['chk_remain'] + '/' + info['total'] + '\t' + info['file_name'] + '(' + info['chk_now'] + ')')
                         ctl_control('set-size', mirror, info['size'])
                     except:
                         print(str(i) + '\t' + mirror + '\t\t' + info['status'] + '\t\t' + info['size'] + '\t\t' + last_time + '(' + info['pass_time'] + ')\t\t\t' + next_time + '\t\t获取失败，请重试')
