@@ -100,7 +100,7 @@ def go_bin():
     elif plat == "aarch64":
         mode = 'arm64'
     elif plat == "arm":
-        choice = input("ARM 32位处理器有极大概率无法完成环境配置，是否继续(Y/N)")
+        choice = input("ARM 32位处理器有极大概率无法完成环境配置，是否继续(Y/N)[N]")
         if choice == 'y' or choice == 'Y':
             pass
         else:
@@ -221,11 +221,11 @@ def build():
 def ssl(mode, name=''):
     global manager_ssl
     if mode == 0:
-        type = input("是否为manager设置SSL(Y/N)(N)")
+        type = input("是否为manager设置SSL(Y/N)[N]")
         ssl_cert = '\"\"'
         ssl_key = '\"\"'
         if type == 'Y' or type == 'y':
-            confirm = input("确认证书文件在ssl/manager目录下，并分别命名为ssl.pem ssl.key(Y/N)")
+            confirm = input("确认证书文件在ssl/manager目录下，并分别命名为ssl.pem ssl.key(Y/N)[N]")
             if confirm == 'Y' or confirm == 'y':
                 ssl_cert = "\"" + path + '/ssl/manager/ssl.pem\"'
                 ssl_key = "\"" + path + '/ssl/manager/ssl.key\"'
@@ -242,7 +242,7 @@ def ssl(mode, name=''):
         ssl_key = '\"\"'
         if manager_ssl:
             worker_conf['manager']['ca_cert'] = "\"" + path + '/ssl/manager/ca.cert\"'
-        type = input("是否为worker设置SSL(Y/N)(N)")
+        type = input("是否为worker设置SSL(Y/N)[N]")
         if type == 'Y' or type == 'y':
             confirm = input("确认证书文件在ssl/worker目录下，并分别命名为" + name + "-ssl.pem " + name + "-ssl.key(Y/N)")
             if confirm == 'Y' or confirm == 'y':
@@ -265,18 +265,18 @@ def db():
 
 
 def init_manager():
-    debug = input("是否开启Debug(Y/N)(N)")
+    debug = input("是否开启Debug(Y/N)[N]")
     if debug == 'Y' or debug == 'y':
         manager_conf['debug'] = 'true'
     else:
         manager_conf['debug'] = 'false'
-    bind_ip = input("绑定IP(127.0.0.1)：")
+    bind_ip = input("绑定IP[127.0.0.1]：")
     if bind_ip:
         pass
     else:
         bind_ip = '127.0.0.1'
     addr = "\"" + bind_ip + "\""
-    bind_port = input("绑定端口(14242)：")
+    bind_port = input("绑定端口[14242]：")
     if bind_port:
         pass
     else:
@@ -304,30 +304,30 @@ def init_manager():
 
 def init_worker():
     name = input("输入Worker名称：")
-    dir = input("输入放置镜像文件的目录：(以/结尾)(/data/mirrors/)")
+    dir = input("输入放置镜像文件的目录：(以/结尾)[/data/mirrors/]")
     if dir:
         pass
     else:
         dir = '/data/mirrors/'
-    con = input("输入线程数(10)：")
+    con = input("输入线程数[10]：")
     if con:
         pass
     else:
         con = str(10)
-    interval = input("输入全局同步周期(分)(1440)：")
+    interval = input("输入全局同步周期(分)[1440]：")
     if interval:
         pass
     else:
         interval = '1440'
     worker_conf['global'] = {'name': "\"" + name + "\"", "log_dir": "\"" + path + "/logs/{{.Name}}\"", 'mirror_dir': "\"" + dir + "\"", 'concurrent': con, 'interval': interval}
-    api = input("输入manager地址(http://" + config['manager_save']['url'] + ")：")
+    api = input("输入manager地址[http://" + config['manager_save']['url'] + "]：")
     if api:
         pass
     else:
         api = 'http://' + config['manager_save']['url']
     token = input("输入token：")
     worker_conf['manager'] = {"api_base": "\"" + api + "\"", "token": "\"" + token + "\""}
-    cgroup = input("是否开启cgroup(Y/N)(N)")
+    cgroup = input("是否开启cgroup(Y/N)[N]")
     if cgroup == 'Y' or cgroup == 'y':
         base_path = input("输入base_path：")
         group = input("输入group：")
@@ -336,18 +336,18 @@ def init_worker():
         base_path = ""
         group = ""
         worker_conf['cgroup'] = {'enable': 'false', 'base_path': "\"" + base_path + "\"", 'group': "\"" + group + "\""}
-    hostname = input("输入主机名(localhost)：")
+    hostname = input("输入主机名[localhost]：")
     if hostname:
         pass
     else:
         hostname = 'localhost'
     ip = '127.0.0.1'
-    listen_addr = input("绑定IP(" + ip + ")：")
+    listen_addr = input("绑定IP[" + ip + "]：")
     if listen_addr:
         pass
     else:
         listen_addr = ip
-    listen_port = input("绑定端口(6000)：")
+    listen_port = input("绑定端口[6000]：")
     if listen_port:
         pass
     else:
@@ -367,7 +367,7 @@ def init_worker():
 def add_mirror():
     name = input("输入mirror名称(不能重复)：")
     mirror_conf.filename = '/etc/tunasync/mirrors/' + name + '.conf'
-    provider = input("输入同步方式(rsync)：")
+    provider = input("输入同步方式[rsync]：")
     if provider:
         pass
     else:
@@ -383,7 +383,7 @@ def add_mirror():
     else:
         pass
     interval = input("设置镜像同步周期(min)(留空沿用全局周期)：")
-    c = input("是否启用ipv6?(Y/N)(N)")
+    c = input("是否启用ipv6?(Y/N)[N]")
     if c == 'Y' or c == 'y':
         use_ipv6 = 'true'
     else:
@@ -412,10 +412,14 @@ def add_mirror():
     print(ctl_control('reload'))
     print("检测Worker状态...")
     status = systemd_control('status', 'worker')
-    if status.find('failed') >= 0:
-        print("Worker启动失败...\n", status)
+    if status.find('active') >= 0 and status.find('running') >= 0:
+        pass
+    else:
+        print("Worker未启动\n", status)
         print("启动Worker...")
         systemd_control('start', 'worker')
+        print("设置worker自启...")
+        systemd_control('enable', 'worker')
     print("开始同步...")
     print(ctl_control('start', name))
     enable_auto('refresh', name)
