@@ -49,10 +49,11 @@ def init(mode):
         systemd_control('enable', 'manager')
         print("开始设置worker...")
         init_worker()
-        print("启动worker...")
-        systemd_control('start', 'worker')
-        print("设置worker自启...")
-        systemd_control('enable', 'worker')
+        # print("启动worker...")
+        # systemd_control('start', 'worker')
+        # print("设置worker自启...")
+        # systemd_control('enable', 'worker')
+        print("worker将不会启动直到新增第一个mirror...")
     except:
         print("设置时出错...")
 
