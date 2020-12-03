@@ -5,7 +5,6 @@ import tarfile
 import os
 from configobj import ConfigObj
 import delegator
-import platform
 import re
 
 manager_conf = ConfigObj(list_values=False)
@@ -28,7 +27,17 @@ def get_config():
 
 def ins_bin():
     try:
-        plat = platform.machine()
+        plat = delegator.run("uname -m").out
+        if plat in ["unknown", '']:
+            plat = delegator.run("arch").out
+        if plat == "x86_64":
+            plat = "amd64"
+        elif plat in ["i386", "i686"]:
+            plat = "i386"
+        elif plat in ["armv7l", "armv8", "armv8l", "aarch64"]:
+            plat = "arm"
+        else:
+            plat = "other"
         try:
             api = requests.get("https://api.github.com/repos/tuna/tunasync/releases/latest")
         except:
@@ -38,9 +47,9 @@ def ins_bin():
         releases = [asset['browser_download_url'] for asset in api.json()['assets']]
         url = ''
         for release in releases:
-            if (plat == 'AMD64' or plat == 'x86_64') and 'amd' in release:
+            if plat == 'x86_64' and 'amd' in release:
                 url = release
-            elif plat == "aarch64" and 'arm' in release:
+            elif plat == "arm" and 'arm' in release:
                 url = release
             else:
                 print("Nonsupport Platform")
