@@ -5,6 +5,7 @@ import tarfile
 import os
 from configobj import ConfigObj
 import delegator
+import platform
 import re
 
 manager_conf = ConfigObj(list_values=False)
@@ -27,30 +28,27 @@ def get_config():
 
 def ins_bin():
     try:
-        plat = delegator.run("uname -m").out.strip('\n')
-        if plat in ["unknown", '']:
-            plat = delegator.run("arch").out.strip('\n')
-        if plat == "x86_64":
-            plat = "amd64"
-        elif plat in ["i386", "i686"]:
-            plat = "i386"
-        elif plat in ["armv7l", "armv8", "armv8l", "aarch64"]:
-            plat = "arm"
-        else:
-            plat = "other"
+        plat = platform.machine()
         try:
+            res = requests.get("https://api.github.com/repos/tuna/tunasync/releases/latest")
             api = requests.get("https://api.github.com/repos/tuna/tunasync/releases/latest")
         except:
+            res = requests.get("https://api.git.sdut.me/repos/tuna/tunasync/releases/latest")
+        dl_url = res.json()['assets'][0]['browser_download_url']
+        if dl_url:
+            print("Get download URL:" + dl_url)
             api = requests.get(
                 "https://cold-breeze-c026.h-wkfx4vqhcj-xsv.workers.dev/repos/tuna/tunasync/releases/latest")
             # 备用地址 https://github-api-indol.vercel.app/repos/tuna/tunasync/releases/latest
         releases = [asset['browser_download_url'] for asset in api.json()['assets']]
         url = ''
         for release in releases:
-            if plat == 'amd64' and 'amd' in release:
+            if (plat.upper() == 'AMD64' or plat == 'x86_64') and 'amd' in release:
                 url = release
-            elif plat == "arm" and 'arm' in release:
+                break
+            elif plat == "aarch64" and 'arm' in release:
                 url = release
+                break
             else:
                 print("Nonsupport Platform")
                 return -1
