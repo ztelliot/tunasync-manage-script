@@ -11,7 +11,7 @@ for info in list:
     type = config[mirror]['type']
     mirror_path = config[mirror]['path']
     if type == 'rsync' and info['status'] == 'success':
-        get_size = "`tac " + path + "/logs/" + mirror + "/latest | grep \"^Total file size: \" | head -n 1 | grep -Po \"[0-9\\.]+[MGT]\"`"
+        get_size = "`tac " + config['manager_save']['log_path'] + mirror + "/latest | grep \"^Total file size: \" | head -n 1 | grep -Po \"[0-9\\.]+[MGT]\"`"
     else:
         try:
             get_size = size_format(int(delegator.run("du -s " + mirror_path + " | awk '{print $1}'").out))

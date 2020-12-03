@@ -144,9 +144,10 @@ def init_worker():
     config = get_config()
     name = input("输入Worker名称：")
     mirror_dir = input("输入放置镜像文件的目录：(以/结尾)[/data/mirrors/]") or '/data/mirrors/'
+    log_dir = input("输入存放日志文件的目录：(以/结尾)[{}/logs/]".format(path)) or path + '/logs/'
     con = input("输入线程数[10]：") or str(10)
     interval = input("输入全局同步周期(分)[1440]：") or '1440'
-    worker_conf['global'] = {'name': "\"" + name + "\"", "log_dir": "\"" + path + "/logs/{{.Name}}\"",
+    worker_conf['global'] = {'name': "\"" + name + "\"", "log_dir": "\"" + log_dir + "{{.Name}}\"",
                              'mirror_dir': "\"" + mirror_dir + "\"", 'concurrent': con, 'interval': interval}
     api = input("输入manager地址[http://" + config['manager_save']['url'] + "]：") or 'http://' + config['manager_save'][
         'url']
@@ -174,7 +175,8 @@ def init_worker():
     worker_conf['server']['ssl_key'] = ssl_key
     worker_conf.write()
     config['manager_save']['worker'] = name
-    config['manager_save']['path'] = worker_conf['global']['mirror_dir'][1:-1]
+    config['manager_save']['path'] = mirror_dir
+    config['manager_save']['log_path'] = log_dir
     with open('config.json', 'w') as cf:
         cf.write(json.dumps(config))
     cf.close()
@@ -329,7 +331,7 @@ class mirror(object):
         return 1
 
     def logs(self):
-        log = path + "/logs/" + self.name + '/latest'
+        log = self.__config__['manager_save']['log_path'] + self.name + '/latest'
         print(delegator.run("tail -n 10 " + log).out)
         return 1
 
@@ -350,7 +352,7 @@ class mirror(object):
                 status = job['status']
                 file_name = remain = speed = rate = total = chk_now = chk_remain = '-'
                 if status == 'syncing':
-                    logs = delegator.run('tail -5 ' + path + "/logs/" + self.name + '/latest').out.split("\n")
+                    logs = delegator.run('tail -5 ' + self.__config__['manager_save']['log_path'] + self.name + '/latest').out.split("\n")
                     for log in logs:
                         if 'B/s' in log:
                             if 'xfr' in log:
