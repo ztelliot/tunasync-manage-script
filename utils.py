@@ -47,7 +47,7 @@ def ins_bin():
         releases = [asset['browser_download_url'] for asset in api.json()['assets']]
         url = ''
         for release in releases:
-            if plat == 'x86_64' and 'amd' in release:
+            if plat == 'amd64' and 'amd' in release:
                 url = release
             elif plat == "arm" and 'arm' in release:
                 url = release
