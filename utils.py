@@ -26,6 +26,21 @@ def get_config():
     return config
 
 
+def size_format(size_k):
+    size_m = size_k / 1024
+    size_g = size_m / 1024
+    size_t = size_g / 1024
+    if size_t > 1:
+        human_readable_size = str(round(size_t, 2)) + 'T'
+    elif size_g > 1:
+        human_readable_size = str(round(size_g, 2)) + 'G'
+    elif size_m > 1:
+        human_readable_size = str(round(size_m, 2)) + 'M'
+    else:
+        human_readable_size = str(round(size_k, 2)) + 'K'
+    return human_readable_size
+
+
 def ins_bin():
     try:
         plat = platform.machine()
@@ -290,7 +305,10 @@ class mirror(object):
         return 1
 
     def refresh(self):
-        get_size = "`du -sh " + self.__config__[self.name]['path'] + " | awk '{print $1}'`"
+        try:
+            get_size = size_format(int(delegator.run("du -s " + self.__config__[self.name]['path'] + " | awk '{print $1}'").out))
+        except:
+            get_size = "`du -sh " + self.__config__[self.name]['path'] + " | awk '{print $1}'`"
         print(ctl_control('set-size', self.name, get_size))
         return 1
 

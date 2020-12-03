@@ -1,10 +1,10 @@
 import json
 import delegator
-from utils import get_config, path
+from utils import get_config, path, size_format
 
 
 config = get_config()
-list = json.loads(delegator.run("tunasynctl list --all").out)
+list = json.loads(delegator.run("tunasynctl list --all").out.strip('\n'))
 worker = config['manager_save']['worker']
 for info in list:
     mirror = info['name']
@@ -13,7 +13,10 @@ for info in list:
     if type == 'rsync' and info['status'] == 'success':
         get_size = "`tac " + path + "/logs/" + mirror + "/latest | grep \"^Total file size: \" | head -n 1 | grep -Po \"[0-9\\.]+[MGT]\"`"
     else:
-        get_size = "`du -sh " + mirror_path + " | awk '{print $1}'`"
+        try:
+            get_size = size_format(int(delegator.run("du -s " + mirror_path + " | awk '{print $1}'").out))
+        except:
+            get_size = "`du -sh " + mirror_path + " | awk '{print $1}'`"
     command = "tunasynctl set-size -w " + worker + " " + mirror + " " + get_size
     print(delegator.run(command).out)
     if info['status'] == 'failed':
