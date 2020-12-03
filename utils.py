@@ -236,8 +236,13 @@ class mirror(object):
         command = ''
         if provider == "command":
             command = '\"' + input("输入同步脚本位置(绝对路径)：") + '\"'
-        elif provider == "rsync":
-            rsync_options = "[\"--info=progress2\"]"
+        elif "rsync" in provider:
+            other_options = input("输入额外的rsync选项(按空格划分)：").split()
+            rsync_options = "["
+            for option in other_options:
+                if option:
+                    rsync_options += "\"{}\", ".format(option)
+            rsync_options += "\"--info=progress2\"]"
         else:
             pass
         interval = input("设置镜像同步周期(min)(留空沿用全局周期)：") or ''
@@ -257,9 +262,20 @@ class mirror(object):
             mirror['memory_limit'] = '\"' + memory_limit + '\"'
         if interval:
             mirror['interval'] = interval
+        options = []
+        addition_option = input('同步额外选项：')
+        while addition_option:
+            options.append(addition_option)
+            addition_option = input()
         mirror_conf['[mirrors]'] = mirror
         self.__config__[name] = {'path': self.__config__['manager_save']['path'] + name, 'type': provider}
         mirror_conf.write()
+        if options:
+            print("您设置的同步选项有:", options)
+            with open('/etc/tunasync/mirrors/' + name + '.conf', 'a+') as af:
+                af.write('\n        [mirrors.env] \n')
+                for addition_option in options:
+                    af.write('        {}\n'.format(addition_option))
         with open('config.json', 'w') as cf:
             cf.write(json.dumps(self.__config__))
         cf.close()

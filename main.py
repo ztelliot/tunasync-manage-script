@@ -126,26 +126,36 @@ def systemctl():
         print(systemd_control('status', 'manager'))
     elif mode == 2:
         print(systemd_control('start', 'manager'))
+        print(systemd_control('status', 'manager'))
     elif mode == 3:
         print(systemd_control('stop', 'manager'))
+        print(systemd_control('status', 'manager'))
     elif mode == 4:
         print(systemd_control('restart', 'manager'))
+        print(systemd_control('status', 'manager'))
     elif mode == 5:
         print(systemd_control('enable', 'manager'))
+        print(systemd_control('status', 'manager'))
     elif mode == 6:
         print(systemd_control('disable', 'manager'))
+        print(systemd_control('status', 'manager'))
     elif mode == 7:
         print(systemd_control('status', 'worker'))
     elif mode == 8:
         print(systemd_control('start', 'worker'))
+        print(systemd_control('status', 'worker'))
     elif mode == 9:
         print(systemd_control('stop', 'worker'))
+        print(systemd_control('status', 'worker'))
     elif mode == 10:
         print(systemd_control('restart', 'worker'))
+        print(systemd_control('status', 'worker'))
     elif mode == 11:
         print(systemd_control('enable', 'worker'))
+        print(systemd_control('status', 'worker'))
     elif mode == 12:
         print(systemd_control('disable', 'worker'))
+        print(systemd_control('status', 'worker'))
 
 
 def menu():
