@@ -117,7 +117,7 @@ def control():
 
 def systemctl():
     mode = input(
-        "请选择操作：\n1.查看Manager状态\n2.启动Manager\n3.关闭Manager\n4.重启Manager\n5.启用Manager自启\n6.禁用Manager自启\n\n7.查看Worker状态\n8.启动Worker\n9.关闭Worker\n10.重启Worker\n11.启用Worker自启\n12.禁用Worker自启\n")
+        "请选择操作：\n1.查看Manager状态\n2.启动Manager\n3.关闭Manager\n4.重启Manager\n5.启用Manager(自启)\n6.禁用Manager(自启)\n\n7.查看Worker状态\n8.启动Worker\n9.关闭Worker\n10.重启Worker\n11.启用Worker(自启)\n12.禁用Worker(自启)\n")
     if mode:
         mode = int(mode)
     else:
@@ -134,9 +134,11 @@ def systemctl():
         print(systemd_control('restart', 'manager'))
         print(systemd_control('status', 'manager'))
     elif mode == 5:
+        print(systemd_control('start', 'manager'))
         print(systemd_control('enable', 'manager'))
         print(systemd_control('status', 'manager'))
     elif mode == 6:
+        print(systemd_control('stop', 'manager'))
         print(systemd_control('disable', 'manager'))
         print(systemd_control('status', 'manager'))
     elif mode == 7:
@@ -151,9 +153,11 @@ def systemctl():
         print(systemd_control('restart', 'worker'))
         print(systemd_control('status', 'worker'))
     elif mode == 11:
+        print(systemd_control('start', 'worker'))
         print(systemd_control('enable', 'worker'))
         print(systemd_control('status', 'worker'))
     elif mode == 12:
+        print(systemd_control('stop', 'worker'))
         print(systemd_control('disable', 'worker'))
         print(systemd_control('status', 'worker'))
 
