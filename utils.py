@@ -27,9 +27,9 @@ def get_config():
 
 def ins_bin():
     try:
-        plat = delegator.run("uname -m").out
+        plat = delegator.run("uname -m").out.strip('\n')
         if plat in ["unknown", '']:
-            plat = delegator.run("arch").out
+            plat = delegator.run("arch").out.strip('\n')
         if plat == "x86_64":
             plat = "amd64"
         elif plat in ["i386", "i686"]:
