@@ -1,5 +1,6 @@
 import time
 import delegator
+from prettytable import PrettyTable
 from utils import ins_bin, init_manager, init_worker, systemd, get_config, systemd_control, ctl_control, mirror as dx
 
 
@@ -45,7 +46,8 @@ def init():
 
 def control():
     config = get_config()
-    print("序号\t名称\t\t状态\t\t大小\t\t上次同步时间(用时s)\t\t下次同步时间\t\t当前进度\t当前速度\t剩余时间\t剩余文件/总数\t当前文件(序号)")
+    table = PrettyTable(['序号', '名称', '状态', '大小', '上次同步时间(用时s)', '下次同步时间', '当前进度', '当前速度', '剩余时间', '剩余文件/总数', '当前文件(序号)'])
+    table.align = 'l'
     for i, name in enumerate(config):
         if name == 'manager_save':
             pass
@@ -56,20 +58,21 @@ def control():
                 next_time = time.strftime("%m-%d %H:%M:%S", time.localtime(int(info['next_time'])))
                 if last_time == next_time:
                     last_time = '正在首次同步'
-                    next_time = '-\t'
+                    next_time = '-'
                 if info['status'] == 'syncing' and config[name]['type'] == 'rsync':
                     try:
-                        print(str(i) + '\t' + name + '\t\t' + info['status'] + '\t\t' + info['size'] + '\t\t' + last_time + '(' + info['pass_time'] + ')\t\t\t' + next_time + '\t\t' + info['rate'] + '\t\t' + info['speed'] + '\t' + info['remain'] + '\t\t' + info['chk_remain'] + '/' + info['total'] + '\t' + info['file_name'] + '(' + info['chk_now'] + ')')
+                        table.add_row([i, name, info['status'], info['size'], '{}({})'.format(last_time, info['pass_time']), next_time, info['rate'], info['speed'], info['remain'], '{}/{}'.format(info['chk_remain'], info['total']), '{}({})'.format(info['file_name'], info['chk_now'])])
                         ctl_control('set-size', name, info['size'])
                     except:
-                        print(str(i) + '\t' + name + '\t\t' + info['status'] + '\t\t' + info['size'] + '\t\t' + last_time + '(' + info['pass_time'] + ')\t\t\t' + next_time + '\t\t获取失败，请重试')
+                        table.add_row([i, name, info['status'], info['size'], '{}({})'.format(last_time, info['pass_time']), next_time, '获', '取', '失', '败', '...'])
                 else:
-                    print(str(i) + '\t' + name + '\t\t' + info['status'] + '\t\t' + info['size'] + '\t\t' + last_time + '(' + info['pass_time'] + ')\t\t' + next_time + '\t\t-\t\t-\t\t-\t\t-\t\t-')
+                    table.add_row([i, name, info['status'], info['size'], '{}({})'.format(last_time, info['pass_time']), next_time, '-', '-', '-', '-', '-'])
             except:
                 try:
-                    print(str(i) + '\t' + name + '\t\tdisabled')
+                    table.add_row([i, name, 'disabled', '', '', '', '', '', '', '', ''])
                 except:
                     pass
+    print(table)
     id = input("输入需要操作的镜像序号(留空返回)：")
     if id:
         id = int(id)

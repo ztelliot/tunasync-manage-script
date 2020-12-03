@@ -2,3 +2,4 @@ requests
 wget
 delegator.py
 configobj
+PrettyTable
