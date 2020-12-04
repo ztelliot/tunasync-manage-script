@@ -46,36 +46,29 @@ def ins_bin():
         plat = platform.machine()
         try:
             res = requests.get("https://api.github.com/repos/tuna/tunasync/releases/latest")
-            api = requests.get("https://api.github.com/repos/tuna/tunasync/releases/latest")
         except:
-            res = requests.get("https://api.git.sdut.me/repos/tuna/tunasync/releases/latest")
-        dl_url = res.json()['assets'][0]['browser_download_url']
-        if dl_url:
-            print("Get download URL:" + dl_url)
-            api = requests.get(
+            res = requests.get(
                 "https://cold-breeze-c026.h-wkfx4vqhcj-xsv.workers.dev/repos/tuna/tunasync/releases/latest")
             # 备用地址 https://github-api-indol.vercel.app/repos/tuna/tunasync/releases/latest
-        releases = [asset['browser_download_url'] for asset in api.json()['assets']]
-        url = ''
-        for release in releases:
-            if (plat.upper() == 'AMD64' or plat == 'x86_64') and 'amd' in release:
-                url = release
+        dl_url = ''
+        urls = [asset['browser_download_url'] for asset in res.json()['assets']]
+        for url in urls:
+            if (plat.upper() == 'AMD64' or plat == 'x86_64') and 'amd' in url:
+                dl_url = url
                 break
-            elif plat == "aarch64" and 'arm' in release:
-                url = release
+            elif plat == "aarch64" and 'arm' in url:
+                dl_url = url
                 break
-            else:
-                print("Nonsupport Platform")
-                return -1
-        if url:
-            print("Get download URL:" + url)
+        if dl_url:
+            print("Get download URL:" + dl_url)
             try:
-                filename = wget.download(url, 'tunasync-linux-bin.tar.gz')
+                filename = wget.download(dl_url, 'tunasync-linux-bin.tar.gz')
                 print("Download success")
             except:
-                url = str(url).replace('github.com', 'g.ioiox.com/https://github.com')
-                print("Try " + url)
-                filename = wget.download(url, 'tunasync-linux-bin.tar.gz')
+                dl_url = str(dl_url).replace('github.com', 'g.ioiox.com/https://github.com')
+                # 备用地址 github-omega.vercel.app/https://github.com
+                print("Try " + dl_url)
+                filename = wget.download(dl_url, 'tunasync-linux-bin.tar.gz')
                 print("Download success")
             try:
                 archive = tarfile.open(filename)
@@ -98,7 +91,7 @@ def ins_bin():
                     pass
                 return -1
         else:
-            print("Get URL ERROR")
+            print("Nonsupport Platform OR Get URL ERROR")
             return -1
     except:
         print("Get bin error")
